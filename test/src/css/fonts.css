@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'airport';
+    src: url('../fonts/airport.eot');
+    src: url('../fonts/airport.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/airport.woff') format('woff'),
+        url('../fonts/airport.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
