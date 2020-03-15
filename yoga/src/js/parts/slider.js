@@ -1,56 +1,72 @@
-function slider() {
-    // Slider
+const sliders = (slides, prev, next) => {
+    let slideIndex = 1,
+        paused = false;
 
-    let slidIndex = 1, // Получаем элементы
-        slides = document.querySelectorAll('.slider-item'),
-        prev = document.querySelector('.prev'),
-        next = document.querySelector('.next'),
-        dotsWrap = document.querySelector('.slider-dots'),
-        dots = document.querySelectorAll('.dot');
+    const items = document.querySelectorAll(slides);
 
     function showSlides(n) {
-
-        if (n > slides.length) { // Переход с последнего на первый и наоборот
-            slidIndex = 1;
-        } else if (n < 1) {
-            slidIndex = slides.length;
+        if (n > items.length) {
+            slideIndex = 1;
         }
 
-        slides.forEach((item) => item.style.display = 'none'); // Перебераем слайды и назначем стиль: display: none;
-        // for(let i = 0; i < slides.length; i++) {  // То же самое что и forEach
-        //     slides[i].style.display = 'none';
-        // }
-        dots.forEach((item) => item.classList.remove('dot-active')); // Перебераем кнопки и удаляем класс
+        if (n < 1) {
+            slideIndex = items.length;
+        }
 
-        slides[slidIndex - 1].style.display = 'block'; // Назначем стиль индексу 0
-        dots[slidIndex - 1].classList.add('dot-active'); // Добавляем класс индексу 0
+        items.forEach(item => {
+            item.classList.add("animated");
+            item.style.display = "none";
+        });
+
+        items[slideIndex - 1].style.display = 'block';
     }
-    showSlides(slidIndex);
 
+    showSlides(slideIndex);
 
-    function plussSlide(n) {
-        showSlides(slidIndex = slidIndex + n);
-    };
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
 
-    function curentSlide(n) {
-        showSlides(slidIndex = n);
-    };
+    try {
+        const prevBtn = document.querySelector(prev),
+            nextBtn = document.querySelector(next);
 
-    prev.addEventListener('click', function () {
-        plussSlide(-1);
-    });
+        prevBtn.addEventListener('click', () => {
+            plusSlides(-1);
+            items[slideIndex - 1].classList.remove('slideInLeft');
+            items[slideIndex - 1].classList.add('slideInRight');
+        });
 
-    next.addEventListener('click', function () {
-        plussSlide(1);
-    });
+        nextBtn.addEventListener('click', () => {
+            plusSlides(1);
+            items[slideIndex - 1].classList.remove('slideInRight');
+            items[slideIndex - 1].classList.add('slideInLeft');
+        });
+    } catch (e) {}
 
-    dotsWrap.addEventListener('click', function (event) { // Событие делегирования, при нажатии на точку, открывается определенный слайд
-        for (let i = 0; i < dots.length + 1; i++) {
-            if (event.target.classList.contains('dot') && event.target == dots[i - 1]) {
-                curentSlide(i);
-            }
+    function activateAnimation() {
+        if (dir === 'vertical') {
+            paused = setInterval(function () {
+                plusSlides(1);
+                items[slideIndex - 1].classList.add('slideInDown');
+            }, 3000);
+        } else {
+            paused = setInterval(function () {
+                plusSlides(1);
+                items[slideIndex - 1].classList.remove('slideInRight');
+                items[slideIndex - 1].classList.add('slideInLeft');
+            }, 3000);
         }
-    });
-}
+    }
+    activateAnimation();
 
-module.exports = slider;
+    items[0].parentNode.addEventListener('mouseenter', () => {
+        clearInterval(paused);
+    });
+    items[0].parentNode.addEventListener('mouseleave', () => {
+        activateAnimation();
+    });
+
+};
+
+export default sliders;
